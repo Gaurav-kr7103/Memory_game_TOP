@@ -94,35 +94,38 @@ export function CardsToPlayWith({ count, setCount }) {
     }, []);
 
     function reShuffle (list) {
-      // let currIndex = list.length-1;
-      // while (currIndex !== 0) {
-      //   let randomIndex = Math.floor(Math.random() * currIndex);
-      //   [list[currIndex], list[randomIndex]] = [list[randomIndex], list[currIndex]];
-      //   currIndex--;
-      // }
+      let arr = [...list]; // copy, don’t mutate input
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
-    function handleEvent(index) {
-      if (!clicked[index]) {
+    function handleEvent(name) {
+      const idx = images.findIndex((animal) => animal.name === name);
+      if (idx == -1)
+        return;
+      if (!clicked[idx]) {
         const updated = [...clicked];
-        updated[index] = true;
+        updated[idx] = true;
         setClick(updated);
         setCount(count + 1);
       } else {
         setCount(0);
-        setClick(new Array(animalList.length).fill(false));
+        setClick(new Array(images.length).fill(false));
       }
     }
 
-    let animalList = images;
+    let animalList = reShuffle(images);
     //reshuffle animalList
-    reShuffle(animalList);
+    // reShuffle(animalList);
     // const clicked = new Array(animalList.length).fill(false);
     
     return (
         <div>
           {animalList.map((animal,index) => {
             return (
-              <div key={animal.key} onClick={() => {handleEvent(index)}}>
+              <div key={animal.key} onClick={() => {handleEvent(animal.name, index)}}>
                   <img src = {animal.image} alt={animal.name}/>
                   <div>name : {animal.name}</div>
               </div>
